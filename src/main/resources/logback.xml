@@ -1,0 +1,54 @@
+<configuration>
+	<include resource="com/ly/fn/inf/rpc/config/inf-rpc-logback.xml" />
+	<include resource="com/ly/fn/inf/daf/config/inf-daf-logback.xml" />
+
+	<if condition='isNull("LOG_DIR")'>
+		<then>
+			<if condition='isDefined("APP_HOME")'>
+				<then>
+					<property name="LOG_DIR" value="${APP_HOME}/log" />
+				</then>
+				<else>
+					<property name="LOG_DIR" value="log" />
+				</else>
+			</if>
+		</then>
+	</if>
+
+	<appender name="METRICS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_DIR}/metrics.log</file>
+		
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_DIR}/metrics.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">  
+        <!-- <filter class="ch.qos.logback.core.filter.EvaluatorFilter">  
+            <evaluator name="myEval">  
+                <expression>
+                	if (logger.equals("metrics"))
+                		return true;
+                	
+                	return false;
+                </expression>  
+            </evaluator>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>  --> 
+        <layout class="ch.qos.logback.classic.PatternLayout">  
+            <pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>  
+        </layout>  
+    </appender>
+    
+	<root level="INFO">
+		<appender-ref ref="METRICS" />
+		<appender-ref ref="stdout" />
+	</root>
+
+</configuration>
